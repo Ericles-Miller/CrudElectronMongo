@@ -13,7 +13,6 @@ export function CrudUser() {
   const fetchUsers = async () => {
     const response = await window.api.listUser()
     console.log(response)
-
     // setUsers(response)
   }
 
