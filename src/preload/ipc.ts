@@ -1,31 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ipcMain } from 'electron'
 import { IUsers } from './IUsers'
-import { v4 as uuid } from 'uuid'
+import { User } from './User'
 
-const users: IUsers[] = []
+export const connection = new User('mongodb://localhost:27017', 'teste')
 
 ipcMain.on('createUser', function createUserInData(_, { email, name, password }: IUsers) {
-  users.push({ email, id: uuid(), name, password })
+  connection.addUser({ email, name, password })
 })
 
 ipcMain.handle('listUser', async function listAllUsers(): Promise<IUsers[]> {
+  const users = await connection.getUsers()
   return users
 })
 
-ipcMain.on('updateUser', function UpdateUser(_, { email, name, password, id }: IUsers) {
-  users.find((user) => {
-    if (user.id === id) {
-      user.email = email
-      user.name = name
-      user.password = password
-    }
-  })
+ipcMain.on('updateUser', function UpdateUser(_, { email, name, password, _id }: IUsers) {
+  connection.updateUser(_id!, { email, name, password })
 })
 
 ipcMain.on('deleteUser', function deleteUser(_, id: string) {
-  const indexToRemove = users.findIndex((user) => user.id === id)
-  if (indexToRemove !== -1) {
-    users.splice(indexToRemove, 1)
-  }
+  connection.deleteUser(id)
 })

@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
-// import { Employees } from './User'
 import { IUsers } from './IUsers'
+import { User } from './User'
 
 export const api = {
   createUser(user: IUsers): void {
@@ -24,10 +24,6 @@ export const api = {
     return ipcRenderer.send('deleteUser', id)
   }
 }
-
-// const employees = new Employees('mongodb://localhost:27017', 'teste')
-// const data = employees.getEmployees()
-// console.log(data)
 
 if (process.contextIsolated) {
   try {

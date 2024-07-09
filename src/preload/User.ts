@@ -1,77 +1,77 @@
-// import { MongoClient, ObjectId } from 'mongodb'
+import { MongoClient, ObjectId } from 'mongodb'
+import { v4 as uuid } from 'uuid'
 
-// interface IUser {
-//   name: string
-//   position: string
-//   salary: number
-// }
+interface IUser {
+  name: string
+  email: string
+  password: string
+  _id?: string
+}
 
-// export class User {
-//   private uri: string
-//   private dbName: string
-//   private client: MongoClient
+export class User {
+  private uri: string
+  private dbName: string
+  private client: MongoClient
 
-//   constructor(uri: string, dbName: string) {
-//     this.uri = uri
-//     this.dbName = dbName
-//     this.client = new MongoClient(this.uri)
-//   }
+  constructor(uri: string, dbName: string) {
+    this.uri = uri
+    this.dbName = dbName
+    this.client = new MongoClient(this.uri)
+  }
 
-//   private async getCollection(): Promise<Mongo.Collection<IUser>> {
-//     try {
-//       await this.client.connect()
+  private async getCollection(): Promise<Mongo.Collection<IUser>> {
+    try {
+      await this.client.connect()
 
-//       const db = this.client.db(this.dbName)
-//       const employees = db.collection<IUser>('employees')
-//       console.log('funfou')
-//       return employees
-//     } catch (error) {
-//       console.error('Erro ao conectar ao banco de dados:', error)
-//       throw error
-//     }
-//   }
+      const db = this.client.db(this.dbName)
+      const users = db.collection<IUser>('users')
+      console.log('funfou')
+      return users
+    } catch (error) {
+      console.error('Erro ao conectar ao banco de dados:', error)
+      throw error
+    }
+  }
 
-//   async getEmployees(): Promise<IUser[]> {
-//     console.log(`Employees.js > getEmployees`)
+  async getUsers(): Promise<IUser[]> {
+    const users = await this.getCollection()
+    const response = await users.find({}).toArray()
 
-//     const employees = await this.getCollection()
-//     const res = await employees.find({}).toArray()
+    return response.map((user: IUser) => ({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      password: user.password
+    }))
+  }
 
-//     return res.map((employee: IUser) => ({
-//       id: employee._id.toHexString(),
-//       name: employee.name,
-//       position: employee.position,
-//       salary: employee.salary
-//     }))
-//   }
+  async addUser(user: IUser): Promise<void> {
+    console.log(`Employee.js > addEmployee: ${JSON.stringify(user)}`)
 
-//   async addEmployee(employee: IUser): Promise<void> {
-//     console.log(`Employee.js > addEmployee: ${JSON.stringify(employee)}`)
+    const users = await this.getCollection()
+    await users.insertOne(user)
+  }
 
-//     const employees = await this.getCollection()
-//     await employees.insertOne(employee)
-//   }
+  async updateUser(id: string, user: IUser): Promise<boolean> {
+    console.log(`user.js > updateuser: ${JSON.stringify(user)}`)
 
-//   async updateEmployee(id: string, employee: IUser): Promise<boolean> {
-//     console.log(`Employee.js > updateEmployee: ${JSON.stringify(employee)}`)
+    const users = await this.getCollection()
+    const result = await users.updateOne(
+      {
+        _id: new ObjectId(id)
+      },
+      {
+        $set: user
+      }
+    )
+    return result.modifiedCount > 0
+  }
 
-//     const employees = await this.getCollection()
-//     const result = await employees.updateOne(
-//       {
-//         _id: new ObjectId(id)
-//       },
-//       {
-//         $set: employee
-//       }
-//     )
-//     return result.modifiedCount > 0
-//   }
+  async deleteUser(id: string): Promise<boolean> {
+    console.log(`Employee.js > deleteEmployee: ${id}`)
 
-//   async deleteEmployee(id: string): Promise<boolean> {
-//     console.log(`Employee.js > deleteEmployee: ${id}`)
-
-//     const employees = await this.getCollection()
-//     const result = await employees.deleteOne({ _id: new ObjectId(id) })
-//     return result.deletedCount > 0
-//   }
-// }
+    const employees = await this.getCollection()
+    const result = await employees.deleteOne({ _id: new ObjectId(id) })
+    return result.deletedCount > 0
+  }
+}
