@@ -1,15 +1,17 @@
-interface Employee {
-  id: string
-  name: string
-  position: string
-  salary: string
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+interface IUsers {
+  nome: string
+  senha: string
+  email: string
+  id?: string
 }
 
 interface Window {
   api: {
-    getEmployees: () => Promise<Employee[]>
-    saveEmployee: (employee: Omit<Employee, 'id'>) => Promise<void>
-    updateEmployee: (id: string, employee: Omit<Employee, 'id'>) => Promise<void>
-    deleteEmployee: (id: string) => Promise<void>
+    createUser(users: IUser): void
+    listUser(): Promise<IUsers[]>
+    updateUser(users: IUsers): void
+    deleteUser(id: string): void
   }
 }
