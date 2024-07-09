@@ -1,10 +1,17 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { useState, useEffect } from 'react'
 
+interface IUsers {
+  nome: string
+  senha: string
+  email: string
+  id?: string
+}
+
 export function CrudUser() {
-  const [users, setUsers] = useState([])
+  const [users, setUsers] = useState<IUsers[]>([])
   const [form, setForm] = useState({ nome: '', email: '', senha: '' })
-  const [editingId, setEditingId] = useState(null)
+  const [editingId, setEditingId] = useState<string | null>(null)
 
   useEffect(() => {
     fetchUsers()
@@ -12,36 +19,33 @@ export function CrudUser() {
 
   const fetchUsers = async () => {
     const response = await window.api.listUser()
-    console.log(response)
-    // setUsers(response)
+    setUsers(response)
   }
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (editingId) {
-      console.log('if')
-      window.api.createUser(form)
-      //await axios.put(`http://localhost:5000/users/${editingId}`, form)
+      const updatedUser = { ...form, id: editingId }
+      window.api.updateUser(updatedUser)
       setEditingId(null)
     } else {
-      console.log('else')
-      window.api.createUser(form)
+      await window.api.createUser(form)
     }
     setForm({ nome: '', email: '', senha: '' })
     fetchUsers()
   }
 
-  const handleEdit = (user) => {
+  const handleEdit = (user: IUsers) => {
     setForm({ nome: user.nome, email: user.email, senha: user.senha })
-    setEditingId(user._id)
+    setEditingId(user.id || null)
   }
 
-  const handleDelete = async (id) => {
-    // await axios.delete(`http://localhost:5000/users/${id}`)
+  const handleDelete = async (id: string) => {
+    window.api.deleteUser(id)
     fetchUsers()
   }
 
@@ -74,10 +78,10 @@ export function CrudUser() {
       </form>
       <ul>
         {users.map((user) => (
-          <li key={user._id}>
+          <li key={user.id}>
             {user.nome} - {user.email}
             <button onClick={() => handleEdit(user)}>Editar</button>
-            <button onClick={() => handleDelete(user._id)}>Excluir</button>
+            <button onClick={() => handleDelete(user.id!)}>Excluir</button>
           </li>
         ))}
       </ul>

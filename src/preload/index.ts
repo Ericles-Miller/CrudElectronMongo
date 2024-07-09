@@ -2,19 +2,26 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 import { Employees } from './employees'
+import { IUsers } from './IUsers'
 
 export const api = {
-  createUser(params: any): void {
-    console.log(params, 'entrou no create user - index - preload')
-    return ipcRenderer.send('createUser', params)
+  createUser(user: IUsers): void {
+    console.log(user, 'entrou no create user - index - preload')
+    return ipcRenderer.send('createUser', user)
   },
 
-  listUser(): Promise<string> {
+  listUser(): Promise<IUsers[]> {
     return ipcRenderer.invoke('listUser')
   },
 
-  updateUser(id: string): void {
-    return ipcRenderer.send('updateUser', id)
+  updateUser(user: IUsers): void {
+    console.log('update user -- index - preload')
+    return ipcRenderer.send('updateUser', user)
+  },
+
+  deleteUser(id: string): void {
+    console.log('delete user -- index - preload')
+    return ipcRenderer.send('deleteUser', id)
   }
 }
 
