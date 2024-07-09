@@ -3,6 +3,7 @@
 interface Window {
   api: {
     createUser(form: any): void
-    listUser(): string
+    listUser(): Promise<string>
+    updateUser(id: string): void
   }
 }

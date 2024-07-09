@@ -9,13 +9,18 @@ export const api = {
     return ipcRenderer.send('createUser', params)
   },
 
-  listUser(): void {
-    return ipcRenderer.send('listUser')
+  listUser(): Promise<string> {
+    return ipcRenderer.invoke('listUser')
+  },
+
+  updateUser(id: string): void {
+    return ipcRenderer.send('updateUser', id)
   }
 }
 
 const employees = new Employees('mongodb://localhost:27017', 'teste')
 const data = employees.getEmployees()
+console.log(data)
 
 if (process.contextIsolated) {
   try {
