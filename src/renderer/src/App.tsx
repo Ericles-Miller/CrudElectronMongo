@@ -1,9 +1,9 @@
-import { EmployeeManager } from './components/Employee'
+import { CrudUser } from './components/CrudUser'
 
 function App(): JSX.Element {
   return (
     <>
-      <EmployeeManager></EmployeeManager>
+      <CrudUser></CrudUser>
     </>
   )
 }

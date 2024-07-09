@@ -1,76 +1,26 @@
-import { contextBridge } from 'electron'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 import { Employees } from './employees'
 
-// Custom APIs for renderer
-const api = {}
+export const api = {
+  createUser(params: any): void {
+    console.log(params, 'entrou no create user - index - preload')
+    return ipcRenderer.send('createUser', params)
+  },
+
+  listUser(): void {
+    return ipcRenderer.send('listUser')
+  }
+}
 
 const employees = new Employees('mongodb://localhost:27017', 'teste')
-let gotEmployeeCallback
-let gotEmployeeUpdatedCallback
-let gotDeletedResultCallback
-
-const getEmployees = () => {
-  console.log(`mainPreload > getEmployees`)
-
-  employees.getEmployees().then((res) => {
-    gotEmployeeCallback(res)
-  })
-}
-
-const gotEmployees = (callback) => {
-  gotEmployeeCallback = callback
-}
-
-const saveEmployee = (employee) => {
-  console.log(
-    `mainPreload > Salary: ${employee.salary}, Name: ${employee.name}, Position: ${employee.position}`
-  )
-  return employees.addEmployee(employee)
-}
-
-const deleteEmployees = (id) => {
-  console.log(`mainPreload > Delete : ${id}`)
-
-  employees.deleteEmployee(id).then((res) => {
-    gotDeletedResultCallback(res)
-  })
-}
-
-const gotDeletedResult = (callback) => {
-  gotDeletedResultCallback = callback
-}
-
-const updateEmployee = (id, emp) => {
-  console.log(`mainPreload > upDateEmployee : ${id}`)
-
-  const employee = {
-    salary: emp.salary,
-    name: emp.name,
-    position: emp.position
-  }
-
-  employees.updateEmployee(id, employee).then((res) => {
-    gotEmployeeUpdatedCallback(res)
-  })
-}
-
-const gotEmployeeUpdatedResult = (callback) => {
-  gotEmployeeUpdatedCallback = callback
-}
+const data = employees.getEmployees()
 
 if (process.contextIsolated) {
   try {
     contextBridge.exposeInMainWorld('electron', electronAPI)
-    contextBridge.exposeInMainWorld('api', {
-      getEmployees,
-      gotEmployees,
-      saveEmployee,
-      updateEmployee,
-      gotEmployeeUpdatedResult,
-      gotDeletedResult,
-      deleteEmployees
-    })
+    contextBridge.exposeInMainWorld('api', api)
   } catch (error) {
     console.error(error)
   }
