@@ -2,15 +2,15 @@
 import { useState, useEffect } from 'react'
 
 interface IUsers {
-  nome: string
-  senha: string
+  name: string
+  password: string
   email: string
   id?: string
 }
 
 export function CrudUser() {
   const [users, setUsers] = useState<IUsers[]>([])
-  const [form, setForm] = useState({ nome: '', email: '', senha: '' })
+  const [form, setForm] = useState({ name: '', email: '', password: '' })
   const [editingId, setEditingId] = useState<string | null>(null)
 
   useEffect(() => {
@@ -35,12 +35,12 @@ export function CrudUser() {
     } else {
       await window.api.createUser(form)
     }
-    setForm({ nome: '', email: '', senha: '' })
+    setForm({ name: '', email: '', password: '' })
     fetchUsers()
   }
 
   const handleEdit = (user: IUsers) => {
-    setForm({ nome: user.nome, email: user.email, senha: user.senha })
+    setForm({ name: user.name, email: user.email, password: user.password })
     setEditingId(user.id || null)
   }
 
@@ -55,9 +55,9 @@ export function CrudUser() {
       <form onSubmit={handleSubmit}>
         <input
           type="text"
-          name="nome"
-          placeholder="Nome"
-          value={form.nome}
+          name="name"
+          placeholder="name"
+          value={form.name}
           onChange={handleChange}
         />
         <input
@@ -69,9 +69,9 @@ export function CrudUser() {
         />
         <input
           type="password"
-          name="senha"
-          placeholder="Senha"
-          value={form.senha}
+          name="password"
+          placeholder="password"
+          value={form.password}
           onChange={handleChange}
         />
         <button type="submit">{editingId ? 'Atualizar' : 'Adicionar'}</button>
@@ -79,7 +79,7 @@ export function CrudUser() {
       <ul>
         {users.map((user) => (
           <li key={user.id}>
-            {user.nome} - {user.email}
+            {user.name} - {user.email}
             <button onClick={() => handleEdit(user)}>Editar</button>
             <button onClick={() => handleDelete(user.id!)}>Excluir</button>
           </li>

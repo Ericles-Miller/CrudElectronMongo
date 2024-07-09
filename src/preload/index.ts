@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
-import { Employees } from './employees'
+// import { Employees } from './User'
 import { IUsers } from './IUsers'
 
 export const api = {
@@ -25,9 +25,9 @@ export const api = {
   }
 }
 
-const employees = new Employees('mongodb://localhost:27017', 'teste')
-const data = employees.getEmployees()
-console.log(data)
+// const employees = new Employees('mongodb://localhost:27017', 'teste')
+// const data = employees.getEmployees()
+// console.log(data)
 
 if (process.contextIsolated) {
   try {

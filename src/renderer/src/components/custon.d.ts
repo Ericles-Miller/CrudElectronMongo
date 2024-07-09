@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 interface IUsers {
-  nome: string
-  senha: string
+  name: string
+  password: string
   email: string
   id?: string
 }
