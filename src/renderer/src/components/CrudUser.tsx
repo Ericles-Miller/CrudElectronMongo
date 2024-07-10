@@ -5,7 +5,7 @@ interface IUsers {
   name: string
   password: string
   email: string
-  id?: string
+  _id?: string
 }
 
 export function CrudUser() {
@@ -19,6 +19,7 @@ export function CrudUser() {
 
   const fetchUsers = async () => {
     const response = await window.api.listUser()
+
     setUsers(response)
   }
 
@@ -29,11 +30,12 @@ export function CrudUser() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (editingId) {
-      const updatedUser = { ...form, id: editingId }
+      const updatedUser = { ...form, _id: editingId }
+
       window.api.updateUser(updatedUser)
       setEditingId(null)
     } else {
-      await window.api.createUser(form)
+      window.api.createUser(form)
     }
     setForm({ name: '', email: '', password: '' })
     fetchUsers()
@@ -41,11 +43,13 @@ export function CrudUser() {
 
   const handleEdit = (user: IUsers) => {
     setForm({ name: user.name, email: user.email, password: user.password })
-    setEditingId(user.id || null)
+    setEditingId(user._id || null)
   }
 
-  const handleDelete = async (id: string) => {
-    window.api.deleteUser(id)
+  const handleDelete = async (_id: string) => {
+    console.log(_id)
+
+    window.api.deleteUser(_id)
     fetchUsers()
   }
 
@@ -77,11 +81,11 @@ export function CrudUser() {
         <button type="submit">{editingId ? 'Atualizar' : 'Adicionar'}</button>
       </form>
       <ul>
-        {users.map((user) => (
-          <li key={user.id}>
+        {users.map((user, index) => (
+          <li key={index}>
             {user.name} - {user.email}
             <button onClick={() => handleEdit(user)}>Editar</button>
-            <button onClick={() => handleDelete(user.id!)}>Excluir</button>
+            <button onClick={() => handleDelete(user._id!)}>Excluir</button>
           </li>
         ))}
       </ul>

@@ -4,7 +4,7 @@ interface IUsers {
   name: string
   password: string
   email: string
-  id?: string
+  _id?: string
 }
 
 interface Window {
@@ -12,6 +12,6 @@ interface Window {
     createUser(users: IUser): void
     listUser(): Promise<IUsers[]>
     updateUser(users: IUsers): void
-    deleteUser(id: string): void
+    deleteUser(_id: string): void
   }
 }

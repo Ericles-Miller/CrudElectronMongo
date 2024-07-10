@@ -15,9 +15,11 @@ ipcMain.handle('listUser', async function listAllUsers(): Promise<IUsers[]> {
 })
 
 ipcMain.on('updateUser', function UpdateUser(_, { email, name, password, _id }: IUsers) {
+  console.log(_id, email, name, password, '-- ipc')
+
   connection.updateUser(_id!, { email, name, password })
 })
 
-ipcMain.on('deleteUser', function deleteUser(_, id: string) {
-  connection.deleteUser(id)
+ipcMain.on('deleteUser', function deleteUser(_, _id: string) {
+  connection.deleteUser(_id)
 })

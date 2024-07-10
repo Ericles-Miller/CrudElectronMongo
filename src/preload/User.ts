@@ -1,5 +1,4 @@
 import { MongoClient, ObjectId } from 'mongodb'
-import { v4 as uuid } from 'uuid'
 
 interface IUser {
   name: string
@@ -25,7 +24,7 @@ export class User {
 
       const db = this.client.db(this.dbName)
       const users = db.collection<IUser>('users')
-      console.log('funfou')
+
       return users
     } catch (error) {
       console.error('Erro ao conectar ao banco de dados:', error)
@@ -38,7 +37,7 @@ export class User {
     const response = await users.find({}).toArray()
 
     return response.map((user: IUser) => ({
-      _id: user._id,
+      _id: user._id?.toString(),
       name: user.name,
       email: user.email,
       password: user.password
@@ -53,7 +52,7 @@ export class User {
   }
 
   async updateUser(id: string, user: IUser): Promise<boolean> {
-    console.log(`user.js > updateuser: ${JSON.stringify(user)}`)
+    console.log(`user.js > updateuser: ${JSON.stringify(user)} --${id}`)
 
     const users = await this.getCollection()
     const result = await users.updateOne(
